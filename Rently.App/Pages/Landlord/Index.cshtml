@@ -1,0 +1,130 @@
+﻿@page
+@model Rently.App.Pages.Landlord.IndexModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar shadow-sm">
+            <div class="position-sticky pt-3">
+                <h6 class="sidebar-heading px-3 mb-4 text-muted">
+                    <span>Menu</span>
+                </h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/Landlord/Index">
+                            <i class="bi bi-speedometer2"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-house-add"></i> Add Property
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-boxes"></i> Manage Units
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-currency-dollar"></i> Payments
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+            <!-- KPI Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Properties</h5>
+                            <p class="card-text display-6">@Model.Properties.Count</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-success shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Units</h5>
+                            <p class="card-text display-6">@Model.TotalUnits</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-warning shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Pending Payments</h5>
+                            <p class="card-text display-6">$@Model.TotalPendingPayments</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mt-4">
+                <ul class="nav nav-tabs" id="propertyTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="properties-tab" data-bs-toggle="tab" data-bs-target="#properties" type="button" role="tab">Properties</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="units-tab" data-bs-toggle="tab" data-bs-target="#units" type="button" role="tab">Units</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content pt-3" id="propertyTabsContent">
+                    <div class="tab-pane fade show active" id="properties" role="tabpanel">
+                        @*  <div class="card shadow-sm mb-5">
+                            <div class="card-header">
+                                <h5 class="mb-0">Your Properties</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                
+                            </div>
+                        </div> *@
+                        @if (Model.Properties.Any())
+                        {
+                            <table class="table mb-0 table-striped">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Address</th>
+                                        <th>Units</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var property in Model.Properties)
+                                    {
+                                        <tr>
+                                            <td>@property.Name</td>
+                                            <td>@property.Address</td>
+                                            <td>@property.UnitCount</td>
+                                            <td class="text-end">
+                                                <a class="btn btn-sm btn-outline-secondary" href="#">View</a>
+                                                <a class="btn btn-sm btn-outline-primary" href="#">Add Unit</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="p-3 text-muted text-center">No properties found.</div>
+                        }
+                    </div>
+                    <div class="tab-pane fade" id="units" role="tabpanel">
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
