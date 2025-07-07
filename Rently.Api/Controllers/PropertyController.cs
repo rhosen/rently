@@ -12,7 +12,7 @@ namespace Rently.Api.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize] // restrict to logged-in users only
-    public class PropertyController : ControllerBase
+    public class PropertyController : RentlyControllerBase
     {
         private readonly RentlyDbContext _context;
 
@@ -139,16 +139,5 @@ namespace Rently.Api.Controllers
 
             return NoContent();
         }
-
-        private Guid GetCurrentUserId()
-        {
-            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                            ?? User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
-
-            return Guid.TryParse(userIdString, out var userId)
-                ? userId
-                : Guid.Empty;
-        }
-
     }
 }

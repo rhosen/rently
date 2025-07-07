@@ -2,6 +2,7 @@
 {
     using global::Rently.Api.Data;
     using global::Rently.Api.Data.Entities;
+    using global::Rently.Common.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,36 @@
         [ApiController]
         [Route("api/[controller]")]
         [Authorize]
-        public class UnitController : ControllerBase
+        public class UnitController : RentlyControllerBase
         {
             private readonly RentlyDbContext _context;
 
             public UnitController(RentlyDbContext context)
             {
                 _context = context;
+            }
+
+            // GET: api/unit
+            [HttpGet]
+            public async Task<IActionResult> GetUnits()
+            {
+                var landlordId = GetCurrentUserId(); // implement method to get current user (landlord) id
+                var units = await (
+                                    from unit in _context.Units
+                                    join property in _context.Properties on unit.PropertyId equals property.Id
+                                    where property.LandlordId == landlordId && !unit.IsDeleted && !property.IsDeleted
+                                    select new UnitResponse
+                                    {
+                                        UnitId = unit.Id,
+                                        PropertyId = unit.PropertyId,
+                                        PropertyName = property.Name,
+                                        PropertyAddress = property.Address,
+                                        UnitNumber = unit.UnitNumber,
+                                        RentAmount = unit.RentAmount,
+                                        IsActive = unit.IsActive,
+                                    }
+                                    ).ToListAsync();
+                return Ok(units);
             }
 
             // GET: api/unit/property/{propertyId}
@@ -145,12 +169,6 @@
                 await _context.SaveChangesAsync();
 
                 return NoContent();
-            }
-
-            private Guid GetCurrentUserId()
-            {
-                var userIdString = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
-                return Guid.TryParse(userIdString, out var userId) ? userId : Guid.Empty;
             }
         }
     }

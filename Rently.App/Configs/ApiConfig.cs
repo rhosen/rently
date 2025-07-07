@@ -29,6 +29,7 @@
         public static class Unit
         {
             public const string Create = "/api/units";
+            public const string Get = "/api/unit";
         }
 
         public static class Payments
