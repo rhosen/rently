@@ -1,10 +1,114 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Rently - Simplify Property Management";
 }
+<!-- Google Fonts (Inter) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+</style>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<!-- Hero Section -->
+<section class="hero bg-light py-5">
+    <div class="container-lg">
+        <div class="row align-items-center gy-5">
+            <!-- Image -->
+            <div class="col-lg-6 text-center text-lg-start">
+                <img src="~/img/undraw_happy-announcement_23nf.svg"
+                     class="img-fluid mb-4 mb-lg-0 animate__animated animate__fadeInLeft"
+                     alt="Happy Announcement Illustration" style="max-width: 90%;" />
+            </div>
+
+            <!-- Text -->
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4 lh-sm animate__animated animate__fadeInRight">
+                    <span class="text-primary">The smart</span> way to manage your properties
+                </h1>
+                <p class="lead text-muted mb-4 fs-5">
+                    Rently helps landlords simplify property management — from tracking payments to communicating with tenants.
+                </p>
+                <div>
+                    <a class="btn btn-primary btn-lg px-4 py-2 me-3 shadow" href="/Account/Register">
+                        🚀 Get started
+                    </a>
+                    <a class="btn btn-outline-secondary btn-lg px-4 py-2 shadow-sm" href="#features">
+                        🎥 Request a demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features py-5 bg-white" id="features">
+    <div class="container-lg">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold lh-sm">
+                What <span class="text-primary">Rently</span> Offers
+            </h2>
+            <p class="text-muted fs-5">Powerful features to streamline your rental business</p>
+        </div>
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <div class="bg-light p-4 rounded-4 border border-info border-2 shadow-sm h-100">
+                    <div class="mb-3 fs-1 text-info">🏢</div>
+                    <h5 class="fw-semibold">Manage with ease</h5>
+                    <p class="text-muted">Advertise vacancies, screen tenants, and collect rent online with minimal effort.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light p-4 rounded-4 border border-warning border-2 shadow-sm h-100">
+                    <div class="mb-3 fs-1 text-warning">💳</div>
+                    <h5 class="fw-semibold">Streamlined finances</h5>
+                    <p class="text-muted">Track payments, manage expenses, and view financial reports all in one place.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light p-4 rounded-4 border border-success border-2 shadow-sm h-100">
+                    <div class="mb-3 fs-1 text-success">📣</div>
+                    <h5 class="fw-semibold">Stay connected</h5>
+                    <p class="text-muted">Keep tenants informed with real-time notifications, reminders, and messages.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dashboard Preview -->
+<section class="dashboard-preview bg-body-tertiary py-5">
+    <div class="container-lg">
+        <div class="row align-items-center gy-4">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-3 lh-sm">
+                    <span class="text-success">Modern Dashboard</span>
+                </h2>
+                <p class="text-muted fs-5 mb-4">Track your units, manage payments, and communicate with tenants—all from a clean, intuitive dashboard.</p>
+                <a class="btn btn-outline-success btn-lg px-4 py-2 shadow-sm" href="/Account/Register">Try the dashboard</a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="~/img/undraw_web-app_141a.svg"
+                     class="img-fluid rounded-4 shadow animate__animated animate__fadeInUp"
+                     alt="Dashboard preview" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta bg-primary bg-gradient text-white py-5 text-center">
+    <div class="container">
+        <h2 class="fw-bold mb-4 lh-sm">
+            🎯 <span class="text-warning">Ready</span> to simplify your rental business?
+        </h2>
+        <a class="btn btn-light btn-lg px-5 py-3 shadow" href="/Account/Register">
+            Start for free
+        </a>
+    </div>
+</section>

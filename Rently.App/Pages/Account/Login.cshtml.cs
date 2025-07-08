@@ -18,6 +18,19 @@ namespace Rently.App.Pages.Account
         [BindProperty] public string Email { get; set; }
         [BindProperty] public string Password { get; set; }
 
+
+        public IActionResult OnGet()
+        {
+            var token = HttpContext.Session.GetString("JWToken");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                return RedirectToPage("/Landlord/Index");
+            }
+
+            return Page();
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
             var client = _httpClientFactory.CreateClient("RentlyApi");
