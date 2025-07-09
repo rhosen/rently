@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Rently.App.Configs;
+using Rently.Common.Dtos.Auth;
 using Rently.Common.Dtos.Data;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace Rently.App.Pages.Account
 {
@@ -19,6 +23,9 @@ namespace Rently.App.Pages.Account
 
         [BindProperty]
         public LandlordDto Landlord { get; set; } = new();
+
+        [BindProperty]
+        public ChangePasswordDto ChangePasswordDto { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -43,7 +50,7 @@ namespace Rently.App.Pages.Account
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostUpdateProfileAsync()
         {
             var token = User.FindFirst("JWToken")?.Value;
 
@@ -67,5 +74,30 @@ namespace Rently.App.Pages.Account
             TempData["SuccessMessage"] = "Profile updated successfully!";
             return RedirectToPage();
         }
+
+        public async Task<IActionResult> OnPostChangePasswordAsync()
+        {
+            if (!ModelState.IsValid) return Page();
+
+            var token = User.Claims.FirstOrDefault(c => c.Type == "JWToken")?.Value;
+
+            var client = _httpClientFactory.CreateClient("RentlyApi");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var content = new StringContent(JsonSerializer.Serialize(ChangePasswordDto), Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync(ApiConfig.Landlord.ChangePassword, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                ModelState.AddModelError(string.Empty, $"Password change failed: {errorBody}");
+                return Page();
+            }
+
+            TempData["SuccessMessage"] = "Password changed successfully!";
+            return RedirectToPage();
+        }
+
     }
 }

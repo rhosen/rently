@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Rently.Api.Data;
+using Rently.Api.Interfaces;
+using Rently.Api.Services;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -96,6 +98,8 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -103,6 +107,7 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
 
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 var app = builder.Build();
 

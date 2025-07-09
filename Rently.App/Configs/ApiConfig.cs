@@ -24,7 +24,7 @@
             public const string GetProperties = "/api/landlord/me/properties";
 
             // If you want, you can add:
-            // public const string ChangePassword = "/api/landlords/me/password";
+            public const string ChangePassword = "/api/landlord/me/change-password";
             // public const string UploadProfileImage = "/api/landlords/me/photo";
         }
 

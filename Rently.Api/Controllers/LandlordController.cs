@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Rently.Api.Data;
 using Microsoft.EntityFrameworkCore;
+using Rently.Api.Data;
+using Rently.Api.Interfaces;
+using Rently.Common.Dtos.Auth;
 using Rently.Common.Dtos.Data;
 
 namespace Rently.Api.Controllers
@@ -12,9 +14,12 @@ namespace Rently.Api.Controllers
     public class LandlordController: RentlyControllerBase
     {
         private readonly RentlyDbContext _context;
-        public LandlordController(RentlyDbContext context)
+        private readonly IAccountService _accountService;
+        public LandlordController(RentlyDbContext context,
+                                  IAccountService accountService)
         {
             _context = context;
+            _accountService =  accountService;
         }
 
         // ✅ GET /api/landlord/me
@@ -76,6 +81,23 @@ namespace Rently.Api.Controllers
 
             var landlord = await _context.Landlords.FirstOrDefaultAsync(l => l.Id == landlordId);
             return landlord;
+        }
+
+        // ✅ POST /api/landlord/me/change-password
+        [HttpPost("me/change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
+        {
+            var landlordId = GetCurrentUserId();
+
+            if (landlordId == null) return Unauthorized();
+
+            var landlord = await _context.Landlords.FirstOrDefaultAsync(x => x.Id == landlordId);
+
+            var result = await _accountService.ChangePassword(dto, landlord.IdentityUserId);
+            
+            if (!result) return BadRequest(new { Message = "Failed to change Password." });
+
+            return Ok(new { Message = "Password changed successfully." });
         }
     }
 }
