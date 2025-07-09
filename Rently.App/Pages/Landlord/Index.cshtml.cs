@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Rently.App.Configs;
 using Rently.Common.Models;
@@ -20,27 +20,28 @@ namespace Rently.App.Pages.Landlord
         public List<PropertyResponse> Properties { get; set; }
         public List<UnitResponse> Units { get; set; }
         public PropertyResponse Property { get; set; }
-        public UnitResponse Unit{ get; set; }
+        public UnitResponse Unit { get; set; }
 
         public bool IsEditMode = false;
 
         public int TotalUnits = 0;
         public decimal TotalPendingPayments = 0;
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
-            var token = HttpContext.Session.GetString("JWToken");
 
-            if (string.IsNullOrWhiteSpace(token))
+            if (!User.Identity.IsAuthenticated)
             {
-                Response.Redirect("/Account/Login");
-                return;
+                return RedirectToPage("/Account/Login");
             }
 
             Email = User?.Identity?.Name ?? "Landlord";
+            var token = User.FindFirst("JWToken")?.Value;
             HttpClient client = GetClient(token);
             await LoadPropertyAsync(client);
             await LoadUnitAsync(client);
+
+            return Page();
         }
 
         private HttpClient GetClient(string token)

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Rently.App.Configs;
 using System.Net.Http.Headers;
 
@@ -5,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
-
 
 
 builder.Services.AddHttpClient("RentlyApi", client =>
@@ -17,6 +17,13 @@ builder.Services.AddHttpClient("RentlyApi", client =>
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSession();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

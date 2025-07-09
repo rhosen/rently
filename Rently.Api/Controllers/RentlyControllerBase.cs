@@ -5,14 +5,12 @@ using System.Security.Claims;
 namespace Rently.Api.Controllers
 {
     [ApiController]
-    public class RentlyControllerBase: ControllerBase
+    public class RentlyControllerBase : ControllerBase
     {
         protected Guid GetCurrentUserId()
         {
-            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                            ?? User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
-
-            return Guid.TryParse(userIdString, out var userId)? userId : Guid.Empty;
+            var userIdString = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            return Guid.TryParse(userIdString, out var userId) ? userId : Guid.Empty;
         }
     }
 }

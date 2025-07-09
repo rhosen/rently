@@ -102,8 +102,8 @@ namespace Rently.Api.Controllers
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, landord.Id.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, landord.Id.ToString()), // important
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
+                new Claim(JwtRegisteredClaimNames.Name, string.Concat(landord.FirstName, " ", landord.LastName) ?? ""),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

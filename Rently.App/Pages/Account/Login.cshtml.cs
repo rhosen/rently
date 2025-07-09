@@ -1,8 +1,12 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Rently.App.Configs;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Rently.App.Pages.Account
 {
@@ -21,25 +25,11 @@ namespace Rently.App.Pages.Account
 
         public IActionResult OnGet()
         {
-            var token = HttpContext.Session.GetString("JWToken");
-
-            if (!string.IsNullOrEmpty(token))
-            {
-                return RedirectToPage("/Landlord/Index");
-            }
-
-            return Page();
+            return User.Identity.IsAuthenticated ? RedirectToPage("/Landlord/Index") : Page();
         }
-
         public async Task<IActionResult> OnPostAsync()
         {
-            var client = _httpClientFactory.CreateClient("RentlyApi");
-
-            var payload = new { Email, Password };
-
-            var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-
-            var response = await client.PostAsync(ApiConfig.Auth.Login, content);
+            var response = await AuthenticateUserAsync(Email, Password);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -47,14 +37,56 @@ namespace Rently.App.Pages.Account
                 return Page();
             }
 
+            var token = await ExtractTokenAsync(response);
+
+            var claims = CreateCookieClaims(token);
+
+            await SignInUserAsync(claims);
+
+            return RedirectToPage("/Landlord/Index");
+        }
+
+        private async Task<HttpResponseMessage> AuthenticateUserAsync(string email, string password)
+        {
+            var client = _httpClientFactory.CreateClient("RentlyApi");
+            var payload = new { Email = email, Password = password };
+            var content = new StringContent(JsonSerializer.Serialize(payload), System.Text.Encoding.UTF8, "application/json");
+            return await client.PostAsync(ApiConfig.Auth.Login, content);
+        }
+
+        private async Task<string> ExtractTokenAsync(HttpResponseMessage response)
+        {
             var responseBody = await response.Content.ReadAsStringAsync();
             var json = JsonDocument.Parse(responseBody);
-            var token = json.RootElement.GetProperty("token").GetString();
-
-            // Save token to session (or cookie)
-            HttpContext.Session.SetString("JWToken", token);
-
-            return RedirectToPage("/Landlord/Index"); // Or wherever you'd like to go
+            return json.RootElement.GetProperty("token").GetString();
         }
+
+        private List<Claim> CreateCookieClaims(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwt = handler.ReadJwtToken(token);
+
+            var userId = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            var email = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value;
+            var fullName = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+
+            return new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, userId ?? ""),
+                new Claim(ClaimTypes.Email, email ?? ""),
+                new Claim(ClaimTypes.Name, fullName ?? ""),
+                new Claim("JWToken", token ?? "")
+            };
+        }
+
+
+        private async Task SignInUserAsync(List<Claim> claims)
+        {
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        }
+
     }
 }
