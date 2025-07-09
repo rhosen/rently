@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Rently.Api.Data;
 using Rently.Api.Data.Entities;
-using Rently.Api.Dtos;
+using Rently.Common.Dtos.Auth;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;

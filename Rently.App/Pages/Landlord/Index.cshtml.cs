@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Rently.App.Configs;
 using Rently.App.Models;
-using Rently.Common.Models;
+using Rently.Common.Dtos.Data;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -18,10 +18,10 @@ namespace Rently.App.Pages.Landlord
         }
         public string Email { get; set; } = "Landlord";
 
-        public List<PropertyResponse> Properties { get; set; }
-        public List<UnitResponse> Units { get; set; }
-        public PropertyResponse Property { get; set; }
-        public UnitResponse Unit { get; set; }
+        public List<PropertyDto> Properties { get; set; }
+        public List<UnitDto> Units { get; set; }
+        public PropertyDto Property { get; set; }
+        public UnitDto Unit { get; set; }
         public KpiModel Kpi { get; set; }
 
         public bool IsEditMode = false;
@@ -57,10 +57,10 @@ namespace Rently.App.Pages.Landlord
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var data = JsonSerializer.Deserialize<List<PropertyResponse>>(json, new JsonSerializerOptions
+                var data = JsonSerializer.Deserialize<List<PropertyDto>>(json, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                }) ?? new List<PropertyResponse>();
+                }) ?? new List<PropertyDto>();
 
                 Properties = data;
                 Kpi = new KpiModel
@@ -77,10 +77,10 @@ namespace Rently.App.Pages.Landlord
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var data = JsonSerializer.Deserialize<List<UnitResponse>>(json, new JsonSerializerOptions
+                var data = JsonSerializer.Deserialize<List<UnitDto>>(json, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                }) ?? new List<UnitResponse>();
+                }) ?? new List<UnitDto>();
 
                 Units = data;
             }

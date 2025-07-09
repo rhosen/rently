@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rently.Api.Data;
 using Rently.Api.Data.Entities;
-using Rently.Common.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace Rently.Api.Controllers
 {
@@ -29,7 +26,7 @@ namespace Rently.Api.Controllers
 
             var properties = await _context.Properties
                 .Where(p => p.LandlordId == landlordId && !p.IsDeleted)
-                .Select(p => new PropertyResponse
+                .Select(p => new Common.Dtos.Data.PropertyDto
                 {
                     Id = p.Id,
                     Name = p.Name,

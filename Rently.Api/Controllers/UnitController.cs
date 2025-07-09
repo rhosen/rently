@@ -1,15 +1,12 @@
-﻿namespace Rently.Api.Controllers
-{
-    using global::Rently.Api.Data;
-    using global::Rently.Api.Data.Entities;
-    using global::Rently.Common.Models;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
+﻿using global::Rently.Api.Data;
+using global::Rently.Api.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Rently.Common.Dtos.Data;
 
+namespace Rently.Api.Controllers
+{
     namespace Rently.Api.Controllers
     {
         [ApiController]
@@ -33,7 +30,7 @@
                                     from unit in _context.Units
                                     join property in _context.Properties on unit.PropertyId equals property.Id
                                     where property.LandlordId == landlordId && !unit.IsDeleted && !property.IsDeleted
-                                    select new UnitResponse
+                                    select new UnitDto
                                     {
                                         UnitId = unit.Id,
                                         PropertyId = unit.PropertyId,

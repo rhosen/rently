@@ -1,6 +1,6 @@
-﻿namespace Rently.Common.Models
+﻿namespace Rently.Common.Dtos.Data
 {
-    public class PropertyResponse
+    public class PropertyDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

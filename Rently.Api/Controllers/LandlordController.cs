@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rently.Api.Data;
-using Rently.Common.Models;
 using Microsoft.EntityFrameworkCore;
+using Rently.Common.Dtos.Data;
 
 namespace Rently.Api.Controllers
 {

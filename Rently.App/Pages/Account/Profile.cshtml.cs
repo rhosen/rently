@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Rently.App.Configs;
-using Rently.Common.Models;
+using Rently.Common.Dtos.Data;
 using System.Net.Http.Headers;
 
 namespace Rently.App.Pages.Account

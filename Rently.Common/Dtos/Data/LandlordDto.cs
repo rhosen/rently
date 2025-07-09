@@ -1,4 +1,4 @@
-﻿namespace Rently.Common.Models
+﻿namespace Rently.Common.Dtos.Data
 {
     public class LandlordDto
     {
