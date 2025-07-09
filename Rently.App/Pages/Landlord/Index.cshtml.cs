@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Rently.App.Configs;
+using Rently.App.Models;
 using Rently.Common.Models;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -21,11 +22,9 @@ namespace Rently.App.Pages.Landlord
         public List<UnitResponse> Units { get; set; }
         public PropertyResponse Property { get; set; }
         public UnitResponse Unit { get; set; }
+        public KpiModel Kpi { get; set; }
 
         public bool IsEditMode = false;
-
-        public int TotalUnits = 0;
-        public decimal TotalPendingPayments = 0;
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -64,7 +63,11 @@ namespace Rently.App.Pages.Landlord
                 }) ?? new List<PropertyResponse>();
 
                 Properties = data;
-                TotalUnits = Properties.Sum(x => x.UnitCount);
+                Kpi = new KpiModel
+                {
+                    TotalProperties = Properties.Count,
+                    TotalUnits = Properties.Sum(x => x.UnitCount)
+                };
             }
         }
 

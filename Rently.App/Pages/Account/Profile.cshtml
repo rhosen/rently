@@ -1,0 +1,111 @@
+﻿@page
+@model Rently.App.Pages.Account.ProfileModel
+@{
+}
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "_Layout";
+}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <partial name="_LandlordSidebarPartial" />
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+            <partial name="_LandlordKpiPartial" model="new Models.KpiModel()" />
+            <!-- ✅ Shared Form for Create/Edit -->
+            <div class="container mt-4">
+                <ul class="nav nav-tabs" id="userTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="properties-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">Profile</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="units-tab" data-bs-toggle="tab" data-bs-target="#change-password" type="button" role="tab">Password</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content pt-3" id="userTabsContent">
+                    <div class="tab-pane fade show active" id="profile" role="tabpanel">
+                        <form method="post" asp-page-handler="Save">
+                            <!-- Name + Email in one row -->
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <label asp-for="Landlord.FirstName" class="form-label small text-muted">First Name</label>
+                                    <input asp-for="Landlord.FirstName" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="Rubel" />
+                                    <span asp-validation-for="Landlord.FirstName" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Landlord.LastName" class="form-label small text-muted">Last Name</label>
+                                    <input asp-for="Landlord.LastName" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="Hosen" />
+                                    <span asp-validation-for="Landlord.LastName" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Landlord.Email" class="form-label small text-muted">Email</label>
+                                    <input asp-for="Landlord.Email" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="rubel@example.com" readonly />
+                                    <span asp-validation-for="Landlord.Email" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <!-- Phone + DOB -->
+                            <div class="row g-4 pt-4">
+                                <div class="col-md-6">
+                                    <label asp-for="Landlord.PhoneNumber" class="form-label small text-muted">Phone Number</label>
+                                    <input asp-for="Landlord.PhoneNumber" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="+880..." />
+                                    <span asp-validation-for="Landlord.PhoneNumber" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Landlord.DateOfBirth" class="form-label small text-muted">Date of Birth</label>
+                                    <input asp-for="Landlord.DateOfBirth" type="date" class="form-control border-0 border-bottom rounded-0 shadow-sm" />
+                                    <span asp-validation-for="Landlord.DateOfBirth" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <!-- Address row (Street) -->
+                            <div class="row g-4 pt-4">
+                                <div class="col-md-12">
+                                    <label asp-for="Landlord.StreetAddress" class="form-label small text-muted">Street Address</label>
+                                    <input asp-for="Landlord.StreetAddress" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="123 Main St." />
+                                    <span asp-validation-for="Landlord.StreetAddress" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <!-- City + State + Postal + Country -->
+                            <div class="row g-4 pt-4">
+                                <div class="col-md-3">
+                                    <label asp-for="Landlord.City" class="form-label small text-muted">City</label>
+                                    <input asp-for="Landlord.City" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="City" />
+                                    <span asp-validation-for="Landlord.City" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label asp-for="Landlord.StateOrProvince" class="form-label small text-muted">State</label>
+                                    <input asp-for="Landlord.StateOrProvince" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="State" />
+                                    <span asp-validation-for="Landlord.StateOrProvince" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label asp-for="Landlord.PostalCode" class="form-label small text-muted">Postal Code</label>
+                                    <input asp-for="Landlord.PostalCode" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="12345" />
+                                    <span asp-validation-for="Landlord.PostalCode" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label asp-for="Landlord.Country" class="form-label small text-muted">Country</label>
+                                    <input asp-for="Landlord.Country" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="Bangladesh" />
+                                    <span asp-validation-for="Landlord.Country" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 d-flex gap-2">
+                                <button type="submit" class="btn btn-dark px-4">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="change-password" role="tabpanel">
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+

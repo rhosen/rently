@@ -8,67 +8,11 @@
 
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar -->
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar shadow-sm">
-            <div class="position-sticky pt-4 px-3">
-                <h6 class="text-uppercase text-muted small fw-semibold mb-4">Menu</h6>
-                <ul class="nav flex-column">
-                    <li class="nav-item mb-2">
-                        <a class="nav-link active d-flex align-items-center gap-2 fw-semibold px-3 py-2 rounded" aria-current="page" href="/Landlord/Index">
-                            <i class="bi bi-speedometer2 fs-5"></i> Home
-                        </a>
-                    </li>
-                    <li class="nav-item mb-2">
-                        <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded" href="#">
-                            <i class="bi bi-house-add fs-5"></i> Add Property
-                        </a>
-                    </li>
-                    <li class="nav-item mb-2">
-                        <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded" href="#">
-                            <i class="bi bi-boxes fs-5"></i> Manage Units
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded" href="#">
-                            <i class="bi bi-currency-dollar fs-5"></i> Payments
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+        <partial name="_LandlordSidebarPartial" />
         <!-- Main content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
-            <!-- KPI Cards -->
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card text-white bg-primary shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Properties</h5>
-                            <p class="card-text display-6">@Model.Properties.Count</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card text-white bg-success shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Units</h5>
-                            <p class="card-text display-6">@Model.TotalUnits</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card text-white bg-warning shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Pending Payments</h5>
-                            <p class="card-text display-6">$@Model.TotalPendingPayments</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            <partial name="_LandlordKpiPartial" model="Model.Kpi"/>
             <!-- ✅ Shared Form for Create/Edit -->
-
-
             <div class="container mt-4">
                 <ul class="nav nav-tabs" id="propertyTabs" role="tablist">
                     <li class="nav-item" role="presentation">

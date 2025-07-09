@@ -13,11 +13,21 @@
         public static class Landlord
         {
             public const string Create = "/api/landlords";
-            public const string Get = "/api/landlords/{id}";
-            public const string GetProperties = "/api/landlords/me/properties";
 
-            // Add more as you build
+            // ✅ Authenticated landlord: get their own profile
+            public const string Me = "/api/landlord/me";
+
+            // ✅ Authenticated landlord: update their own profile
+            public const string UpdateMe = "/api/landlord/me";
+
+            // ✅ Authenticated landlord: get their own properties
+            public const string GetProperties = "/api/landlord/me/properties";
+
+            // If you want, you can add:
+            // public const string ChangePassword = "/api/landlords/me/password";
+            // public const string UploadProfileImage = "/api/landlords/me/photo";
         }
+
 
         public static class Property
         {

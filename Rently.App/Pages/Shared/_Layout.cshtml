@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Http
 
 @{
+    var fullName = User.Identity.Name ?? "User";
+    var initials = string.Join("", fullName.Split(" ").Select(n => n[0])).ToUpper();
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -33,12 +35,29 @@
                     </ul>
 
                     <!-- Right-side auth buttons -->
-                    <div class="d-flex">
+                    <div class="d-flex align-items-center">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <form method="post" asp-page="/Account/Logout">
-                                <button type="submit" class="btn btn-outline-danger">Logout</button>
-                            </form>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary rounded-circle d-flex align-items-center justify-content-center"
+                                        type="button"
+                                        id="profileDropdown"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        style="width: 40px; height: 40px;">
+                                    @initials
+                                    @* <img src="@profileImageUrl" class="rounded-circle" style="width: 40px; height: 40px;"> *@
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                    <li><h6 class="dropdown-header">@fullName</h6></li>
+                                    <li><a class="dropdown-item" asp-page="/Account/Profile">Profile</a></li>
+                                    <li>
+                                        <form method="post" asp-page="/Account/Logout" class="m-0">
+                                            <button type="submit" class="dropdown-item text-danger">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
                         }
                         else
                         {
@@ -46,6 +65,7 @@
                             <a class="btn btn-primary" asp-page="/Account/Register">Register</a>
                         }
                     </div>
+
                 </div>
             </div>
         </nav>
