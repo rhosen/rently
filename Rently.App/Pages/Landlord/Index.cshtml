@@ -2,193 +2,187 @@
 @model Rently.App.Pages.Landlord.IndexModel
 
 @{
-    ViewData["Title"] = "Dashboard";
-    Layout = "_Layout";
+    ViewData["Title"] = "Home";
+    Layout = "_LandlordLayout";
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <partial name="_LandlordSidebarPartial" />
-        <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
-            <partial name="_LandlordKpiPartial" model="Model.Kpi"/>
-            <!-- ✅ Shared Form for Create/Edit -->
-            <div class="container mt-4">
-                <ul class="nav nav-tabs" id="propertyTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="properties-tab" data-bs-toggle="tab" data-bs-target="#properties" type="button" role="tab">Properties</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="units-tab" data-bs-toggle="tab" data-bs-target="#units" type="button" role="tab">Units</button>
-                    </li>
-                </ul>
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    @* <partial name="_LandlordKpiPartial" model="Model.Kpi" /> *@
+    <!-- ✅ Shared Form for Create/Edit -->
+    <div class="container mt-4">
+        <ul class="nav nav-tabs" id="propertyTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="properties-tab" data-bs-toggle="tab" data-bs-target="#properties" type="button" role="tab">Properties</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="units-tab" data-bs-toggle="tab" data-bs-target="#units" type="button" role="tab">Units</button>
+            </li>
+        </ul>
 
-                <div class="tab-content pt-3" id="propertyTabsContent">
-                    <div class="tab-pane fade show active" id="properties" role="tabpanel">
+        <div class="tab-content pt-3" id="propertyTabsContent">
+            <div class="tab-pane fade show active" id="properties" role="tabpanel">
 
-                        <form method="post" asp-page-handler="Save">
-                            <input type="hidden" asp-for="Property.Id" />
+                <form method="post" asp-page-handler="Save">
+                    <input type="hidden" asp-for="Property.Id" />
 
-                            <div class="row g-4">
-                                <div class="col-md-6">
-                                    <label asp-for="Property.Name" class="form-label small text-muted">Property Name</label>
-                                    <input asp-for="Property.Name" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="e.g. Oakwood Apartments" />
-                                    <span asp-validation-for="Property.Name" class="text-danger small"></span>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label asp-for="Property.Address" class="form-label small text-muted">Address</label>
-                                    <input asp-for="Property.Address" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="123 Main Street, NY" />
-                                    <span asp-validation-for="Property.Address" class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <div class="row g-4 pt-4">
-                                <div class="col-md-6">
-                                    <label asp-for="Property.IsActive" class="form-label small text-muted">Activate Property</label>
-                                    <select asp-for="Property.IsActive" class="form-select border-0 border-bottom rounded-0 shadow-sm">
-                                        <option value="true">Yes</option>
-                                        <option value="false">No</option>
-                                    </select>
-                                    <span asp-validation-for="Property.IsActive" class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <div class="mt-4 d-flex gap-2">
-                                <button type="submit" class="btn btn-dark px-4">
-                                    @(Model.IsEditMode ? "Update" : "Add Property")
-                                </button>
-                            </div>
-                        </form>
-
-                        <div class="mt-4">
-                            @if (Model.Properties.Any())
-                            {
-                                <table class="table mb-0 table-striped">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Address</th>
-                                            <th>Units</th>
-                                            <th>Active</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var property in Model.Properties)
-                                        {
-                                            <tr>
-                                                <td>@property.Name</td>
-                                                <td>@property.Address</td>
-                                                <td>@property.UnitCount</td>
-                                                <td>@(property.IsActive ? "Yes" : "No")</td>
-                                                <td class="text-end">
-                                                    <a class="btn btn-sm btn-outline-primary" href="#">Edit</a>
-                                                    <a class="btn btn-sm btn-outline-danger" href="#">Delete</a>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            }
-                            else
-                            {
-                                <div class="p-3 text-muted text-center">No properties found.</div>
-                            }
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label asp-for="Property.Name" class="form-label small text-muted">Property Name</label>
+                            <input asp-for="Property.Name" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="e.g. Oakwood Apartments" />
+                            <span asp-validation-for="Property.Name" class="text-danger small"></span>
                         </div>
 
-                    </div>
-                    <div class="tab-pane fade" id="units" role="tabpanel">
-
-                        <form method="post" asp-page-handler="SaveUnit">
-                            <input type="hidden" asp-for="Unit.UnitId" />
-
-                            <div class="row g-4">
-                                <div class="col-md-6">
-                                    <label asp-for="Property.Id" class="form-label small text-muted">Select Property</label>
-                                    <select asp-for="Property.Id" class="form-select border-0 border-bottom rounded-0 shadow-sm">
-                                        <option value="">Select a property</option>
-                                        @* Populate with your properties, e.g.: *@
-                                        @foreach (var property in Model.Properties)
-                                        {
-                                            <option value="@property.Id">@property.Name</option>
-                                        }
-                                    </select>
-                                    <span asp-validation-for="Property.Id" class="text-danger small"></span>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label asp-for="Unit.UnitNumber" class="form-label small text-muted">Unit Number</label>
-                                    <input asp-for="Unit.UnitNumber" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="e.g. 101A" />
-                                    <span asp-validation-for="Unit.UnitNumber" class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <div class="row g-4 pt-4">
-                                <div class="col-md-6">
-                                    <label asp-for="Unit.RentAmount" class="form-label small text-muted">Rent Amount</label>
-                                    <input asp-for="Unit.RentAmount" type="number" step="0.01" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="e.g. 1200.00" />
-                                    <span asp-validation-for="Unit.RentAmount" class="text-danger small"></span>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label asp-for="Unit.IsActive" class="form-label small text-muted">Activate Unit</label>
-                                    <select asp-for="Unit.IsActive" class="form-select border-0 border-bottom rounded-0 shadow-sm">
-                                        <option value="true">Yes</option>
-                                        <option value="false">No</option>
-                                    </select>
-                                    <span asp-validation-for="Unit.IsActive" class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <div class="mt-4 d-flex gap-2">
-                                <button type="submit" class="btn btn-dark px-4">
-                                    @(Model.IsEditMode ? "Update" : "Add Unit")
-                                </button>
-                            </div>
-                        </form>
-
-                        <div class="mt-4">
-                            @if (Model.Units.Any())
-                            {
-                                <table class="table mb-0 table-striped">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Address</th>
-                                            <th>Unit Number</th>
-                                            <th>Rent</th>
-                                            <th>Active</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var property in Model.Units)
-                                        {
-                                            <tr>
-                                                <td>@property.PropertyName</td>
-                                                <td>@property.PropertyAddress</td>
-                                                <td>@property.UnitNumber</td>
-                                                <td>@property.RentAmount</td>
-                                                <td>@(property.IsActive ? "Yes" : "No")</td>
-                                                <td class="text-end">
-                                                    <a class="btn btn-sm btn-outline-primary" href="#">Edit</a>
-                                                    <a class="btn btn-sm btn-outline-danger" href="#">Delete</a>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            }
-                            else
-                            {
-                                <div class="p-3 text-muted text-center">No properties found.</div>
-                            }
+                        <div class="col-md-6">
+                            <label asp-for="Property.Address" class="form-label small text-muted">Address</label>
+                            <input asp-for="Property.Address" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="123 Main Street, NY" />
+                            <span asp-validation-for="Property.Address" class="text-danger small"></span>
                         </div>
-
                     </div>
+
+                    <div class="row g-4 pt-4">
+                        <div class="col-md-6">
+                            <label asp-for="Property.IsActive" class="form-label small text-muted">Activate Property</label>
+                            <select asp-for="Property.IsActive" class="form-select border-0 border-bottom rounded-0 shadow-sm">
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                            <span asp-validation-for="Property.IsActive" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-dark px-4">
+                            @(Model.IsEditMode ? "Update" : "Add Property")
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-4">
+                    @if (Model.Properties.Any())
+                    {
+                        <table class="table mb-0 table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Units</th>
+                                    <th>Active</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var property in Model.Properties)
+                                {
+                                    <tr>
+                                        <td>@property.Name</td>
+                                        <td>@property.Address</td>
+                                        <td>@property.UnitCount</td>
+                                        <td>@(property.IsActive ? "Yes" : "No")</td>
+                                        <td class="text-end">
+                                            <a class="btn btn-sm btn-outline-primary" href="#">Edit</a>
+                                            <a class="btn btn-sm btn-outline-danger" href="#">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="p-3 text-muted text-center">No properties found.</div>
+                    }
                 </div>
+
             </div>
-        </main>
+            <div class="tab-pane fade" id="units" role="tabpanel">
+
+                <form method="post" asp-page-handler="SaveUnit">
+                    <input type="hidden" asp-for="Unit.UnitId" />
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label asp-for="Property.Id" class="form-label small text-muted">Select Property</label>
+                            <select asp-for="Property.Id" class="form-select border-0 border-bottom rounded-0 shadow-sm">
+                                <option value="">Select a property</option>
+                                @* Populate with your properties, e.g.: *@
+                                @foreach (var property in Model.Properties)
+                                {
+                                    <option value="@property.Id">@property.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Property.Id" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Unit.UnitNumber" class="form-label small text-muted">Unit Number</label>
+                            <input asp-for="Unit.UnitNumber" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="e.g. 101A" />
+                            <span asp-validation-for="Unit.UnitNumber" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 pt-4">
+                        <div class="col-md-6">
+                            <label asp-for="Unit.RentAmount" class="form-label small text-muted">Rent Amount</label>
+                            <input asp-for="Unit.RentAmount" type="number" step="0.01" class="form-control border-0 border-bottom rounded-0 shadow-sm" placeholder="e.g. 1200.00" />
+                            <span asp-validation-for="Unit.RentAmount" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Unit.IsActive" class="form-label small text-muted">Activate Unit</label>
+                            <select asp-for="Unit.IsActive" class="form-select border-0 border-bottom rounded-0 shadow-sm">
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                            <span asp-validation-for="Unit.IsActive" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-dark px-4">
+                            @(Model.IsEditMode ? "Update" : "Add Unit")
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-4">
+                    @if (Model.Units.Any())
+                    {
+                        <table class="table mb-0 table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Unit Number</th>
+                                    <th>Rent</th>
+                                    <th>Active</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var property in Model.Units)
+                                {
+                                    <tr>
+                                        <td>@property.PropertyName</td>
+                                        <td>@property.PropertyAddress</td>
+                                        <td>@property.UnitNumber</td>
+                                        <td>@property.RentAmount</td>
+                                        <td>@(property.IsActive ? "Yes" : "No")</td>
+                                        <td class="text-end">
+                                            <a class="btn btn-sm btn-outline-primary" href="#">Edit</a>
+                                            <a class="btn btn-sm btn-outline-danger" href="#">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="p-3 text-muted text-center">No properties found.</div>
+                    }
+                </div>
+
+            </div>
+        </div>
     </div>
-</div>
+</main>

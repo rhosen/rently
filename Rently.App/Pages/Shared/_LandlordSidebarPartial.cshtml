@@ -1,23 +1,65 @@
-﻿
-<!-- Sidebar -->
-<nav class="col-md-2 d-none d-md-block bg-light sidebar shadow-sm">
-    <div class="position-sticky pt-4 px-3">
-        <ul class="nav flex-column">
-            <li class="nav-item mb-2">
-                <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded" asp-page="/Account/Profile">
-                    <i class="bi bi-house-add fs-5"></i> Profile
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.RazorPages
+
+@{
+    var fullName = User.Identity.Name ?? "User";
+    var initials = string.Join("", fullName.Split(" ").Select(n => n[0])).ToUpper();
+    
+    var pageDescriptor = ViewContext.ActionDescriptor as PageActionDescriptor;
+    var currentPath = pageDescriptor?.ViewEnginePath;
+
+}
+
+<div class="col-md-2 d-none d-md-block bg-light sidebar shadow-sm">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+        <img class="bi me-2" src="~/img/favicon-32x32.png" />
+        <span class="fs-4">Rently</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a asp-page="#" class="nav-link @(currentPath == "/Landlord/Home" ? "active" : "")">
+                <svg class="bi me-2" width="16" height="16"><use xlink:href="#home" /></svg>
+                Home
+            </a>
+        </li>
+        <li>
+            <a asp-page="/Landlord/Dashboard" class="nav-link @(currentPath == "/Landlord/Dashboard" ? "active" : "")">
+                <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2" /></svg>
+                Dashboard
+            </a>
+        </li>
+        <li>
+            <a asp-page="/Landlord/Index" class="nav-link @(currentPath  == "/Landlord/Index" ? "active" : "")">
+                <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid" /></svg>
+                Property
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="btn btn-secondary rounded-circle d-flex align-items-center justify-content-center"
+                    type="button"
+                    id="profileDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style="width: 40px; height: 40px;">
+                @initials
+                @* <img src="@profileImageUrl" class="rounded-circle me-2"> *@
+            </span>
+            <strong class="p-2">@fullName</strong>
+        </a>
+        <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+            <li>
+                <a class="dropdown-item" asp-page="/Account/Profile">
+                    <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle" /></svg>
+                    Profile
                 </a>
             </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded active" asp-page="/Landlord/Index">
-                    <i class="bi bi-boxes fs-5"></i> Property
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded" href="#">
-                    <i class="bi bi-currency-dollar fs-5"></i> Payments
-                </a>
-            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" asp-page="/Account/Logout">Sign out</a></li>
         </ul>
     </div>
-</nav>
+</div>
+

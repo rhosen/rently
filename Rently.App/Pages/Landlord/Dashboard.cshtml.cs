@@ -1,28 +1,26 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Rently.App.Configs;
 using Rently.App.Helpers;
+using Rently.App.Models;
 using Rently.Common.Dtos.Data;
 using System.Text.Json;
 
 namespace Rently.App.Pages.Landlord
 {
-    public class IndexModel : PageModel
+    [Authorize]
+    public class DashboardModel : PageModel
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public IndexModel(IHttpClientFactory httpClientFactory)
+        public DashboardModel(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
         }
-        public string Email { get; set; } = "Landlord";
 
-        public List<PropertyDto> Properties { get; set; }
-        public List<UnitDto> Units { get; set; }
-        public PropertyDto Property { get; set; }
-        public UnitDto Unit { get; set; }
-
-        public bool IsEditMode = false;
+        public KpiModel Kpi { get; set; }
+        public string Email { get; private set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -36,7 +34,6 @@ namespace Rently.App.Pages.Landlord
             var token = User.FindFirst("JWToken")?.Value;
             HttpClient client = GetClient(token);
             await LoadPropertyAsync(client);
-            await LoadUnitAsync(client);
 
             return Page();
         }
@@ -59,23 +56,13 @@ namespace Rently.App.Pages.Landlord
                     PropertyNameCaseInsensitive = true
                 }) ?? new List<PropertyDto>();
 
-                Properties = data;
-            }
-        }
-
-        private async Task LoadUnitAsync(HttpClient client)
-        {
-            var response = await client.GetAsync(ApiConfig.Unit.Get);
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var data = JsonSerializer.Deserialize<List<UnitDto>>(json, new JsonSerializerOptions
+                Kpi = new KpiModel
                 {
-                    PropertyNameCaseInsensitive = true
-                }) ?? new List<UnitDto>();
-
-                Units = data;
+                    TotalProperties = data.Count,
+                    TotalUnits = data.Sum(x => x.UnitCount)
+                };
             }
         }
+
     }
 }
