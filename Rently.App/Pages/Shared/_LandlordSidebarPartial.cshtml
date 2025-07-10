@@ -4,7 +4,7 @@
 @{
     var fullName = User.Identity.Name ?? "User";
     var initials = string.Join("", fullName.Split(" ").Select(n => n[0])).ToUpper();
-    
+
     var pageDescriptor = ViewContext.ActionDescriptor as PageActionDescriptor;
     var currentPath = pageDescriptor?.ViewEnginePath;
 
@@ -30,7 +30,7 @@
             </a>
         </li>
         <li>
-            <a asp-page="/Landlord/Index" class="nav-link @(currentPath  == "/Landlord/Index" ? "active" : "")">
+            <a asp-page="/Landlord/Index" class="nav-link @(currentPath == "/Landlord/Index" ? "active" : "")">
                 <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid" /></svg>
                 Property
             </a>
@@ -40,11 +40,11 @@
     <div class="dropdown">
         <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="btn btn-secondary rounded-circle d-flex align-items-center justify-content-center"
-                    type="button"
-                    id="profileDropdown"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    style="width: 40px; height: 40px;">
+                  type="button"
+                  id="profileDropdown"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  style="width: 40px; height: 40px;">
                 @initials
                 @* <img src="@profileImageUrl" class="rounded-circle me-2"> *@
             </span>
@@ -58,7 +58,11 @@
                 </a>
             </li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" asp-page="/Account/Logout">Sign out</a></li>
+            <li>
+                <form method="post" asp-page="/Account/Logout" class="dropdown-item p-0 m-0 border-0 bg-transparent">
+                    <button type="submit" class="dropdown-item">Sign out</button>
+                </form>
+            </li>
         </ul>
     </div>
 </div>

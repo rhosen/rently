@@ -24,6 +24,15 @@
                     <p class="text-muted small">Secure Owner Login</p>
                 </div>
 
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @Html.ValidationSummary(false, "", new { @class = "mb-0" })
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+
                 <form method="post" novalidate>
                     <div class="mb-3">
                         <label for="emailInput" class="form-label">Email Address</label>
