@@ -1,0 +1,35 @@
+﻿@page
+@model Rently.App.Pages.Account.RegistrationConfirmationModel
+@{
+    ViewData["Title"] = "Registration Confirmation";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid d-flex align-items-center justify-content-center pt-5">
+    <div class="row w-100 shadow rounded-4 overflow-hidden bg-white" style="max-width: 960px;">
+
+        <!-- Illustration panel (hidden on small screens) -->
+        <div class="col-md-6 d-none d-md-flex bg-primary align-items-center justify-content-center">
+            <div class="text-center text-white px-4">
+                <img src="~/img/undraw_email_sent.svg" alt="Email Sent Illustration" class="img-fluid mb-4" style="max-height: 260px;" />
+                <h2 class="fw-bold">Thank You!</h2>
+                <p class="small">Your registration was successful.</p>
+            </div>
+        </div>
+
+        <!-- Confirmation message panel -->
+        <div class="col-12 col-md-6 p-4 p-md-5 d-flex align-items-center">
+            <div class="w-100 text-center">
+                <h3 class="fw-bold text-primary mb-4">Registration Confirmation</h3>
+
+                <div class="alert alert-success" role="alert">
+                    A confirmation email has been sent to your email address.<br />
+                    Please check your inbox and follow the link to activate your account.
+                </div>
+
+                <a href="/Account/Login" class="btn btn-primary w-100 fw-semibold mt-3">Go to Login</a>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,36 @@
+﻿@page
+@model Rently.App.Pages.Account.ConfirmEmailModel
+@{
+    Layout = "_Layout";
+}
+
+<div class="container-fluid d-flex align-items-center justify-content-center pt-5">
+    <div class="row w-100 shadow rounded-4 overflow-hidden bg-white" style="max-width: 960px;">
+
+        <!-- Illustration panel (hidden on small screens) -->
+        <div class="col-md-6 d-none d-md-flex bg-primary align-items-center justify-content-center">
+            <div class="text-center text-white px-4">
+                <img src="~/img/undraw_email_verified.svg" alt="Email Verified Illustration" class="img-fluid mb-4" style="max-height: 260px;" />
+                <h2 class="fw-bold">Email Verification</h2>
+                <p class="small">Thank you for joining us!.</p>
+            </div>
+        </div>
+
+        <!-- Status message panel -->
+        <div class="col-12 col-md-6 p-4 p-md-5 d-flex align-items-center">
+            <div class="w-100 text-center">
+                <h3 class="fw-bold text-primary mb-4">@Model.StatusMessage</h3>
+
+                @if (Model.StatusMessage == "Email confirmed successfully!")
+                {
+                    <a href="/Account/Login" class="btn btn-primary w-100 fw-semibold mt-3">Click here to login</a>
+                }
+                else
+                {
+                    <a href="/" class="btn btn-secondary w-100 fw-semibold mt-3">Go to Home</a>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>

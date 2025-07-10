@@ -1,0 +1,33 @@
+﻿@page
+@model Rently.App.Pages.Account.EmailNotConfirmedModelModel
+@{
+    ViewData["Title"] = "Email Not Confirmed";
+}
+
+<div class="container-fluid d-flex align-items-center justify-content-center pt-5">
+    <div class="row w-100 shadow rounded-4 overflow-hidden bg-white" style="max-width: 960px;">
+
+        <div class="col-md-6 d-none d-md-flex bg-warning align-items-center justify-content-center">
+            <div class="text-center text-white px-4">
+                <img src="~/img/undraw_secure-login_m11a.svg" alt="Not confirmed" class="img-fluid mb-4" style="max-height: 260px;" />
+                <h2 class="fw-bold">Almost there!</h2>
+                <p class="small">You need to confirm your email before logging in.</p>
+
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 p-4 p-md-5 d-flex align-items-center">
+            <div class="w-100 text-center">
+
+                <h4 class="fw-bold text-danger mb-3">Email Not Confirmed</h4>
+                <div class="text-center mt-3 small">
+                    Didn't get the email? <a href="/Account/ResendConfirmation" class="text-decoration-none">Resend confirmation email</a>
+                </div>
+                <div class="text-center mt-3 small">
+                    <a href="/Account/Login" class="text-decoration-none">Back to login</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

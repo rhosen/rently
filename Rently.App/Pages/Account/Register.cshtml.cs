@@ -73,7 +73,7 @@ namespace Rently.App.Pages.Account
             }
 
             // Optional: auto-login or redirect to login
-            return RedirectToPage("/Account/Login");
+            return RedirectToPage("/Account/RegistrationConfirmation");
         }
     }
 }
