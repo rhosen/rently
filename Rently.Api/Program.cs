@@ -1,16 +1,22 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Rently.Api.Data;
 using Rently.Api.Interfaces;
 using Rently.Api.Services;
+using Rently.Core.Interfaces.Messaging;
+using Rently.Infrastructure.Messaging.Mailgun;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.Load();
 
 // DB Context
 builder.Services.AddDbContext<RentlyDbContext>(options =>
@@ -108,6 +114,20 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddScoped<IAccountService, AccountService>();
+
+builder.Services.Configure<MailgunOptions>(options =>
+{
+    options.ApiKey = Environment.GetEnvironmentVariable("Mailgun__ApiKey");
+    options.Domain = Environment.GetEnvironmentVariable("Mailgun__Domain");
+    options.From = Environment.GetEnvironmentVariable("Mailgun__FromEmail");
+});
+
+builder.Services.AddHttpClient("MailgunClient", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Mailgun:BaseUrl"]);
+});
+
+builder.Services.AddTransient<IEmailSender, MailgunEmailSender>();
 
 var app = builder.Build();
 

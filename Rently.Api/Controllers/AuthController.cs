@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Rently.Api.Data;
 using Rently.Api.Data.Entities;
 using Rently.Common.Dtos.Auth;
+using Rently.Common.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AppEmailSender = Rently.Core.Interfaces.Messaging.IEmailSender;
 
 namespace Rently.Api.Controllers
 {
@@ -18,14 +21,20 @@ namespace Rently.Api.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
         private readonly RentlyDbContext _context;
+        private readonly FrontendOptions _frontendOptions;
+        private readonly AppEmailSender _emailSender;
 
-        public AuthController(UserManager<IdentityUser> userManager, 
+        public AuthController(UserManager<IdentityUser> userManager,
                               IConfiguration configuration,
-                              RentlyDbContext context)
+                              RentlyDbContext context,
+                              IOptions<FrontendOptions> frontendOptions,
+                              AppEmailSender emailSender)
         {
             _userManager = userManager;
             _configuration = configuration;
             _context = context;
+            _frontendOptions = frontendOptions.Value;
+            _emailSender = emailSender;
         }
 
         [HttpPost("register")]
@@ -72,9 +81,16 @@ namespace Rently.Api.Controllers
             _context.Landlords.Add(landlord);
             await _context.SaveChangesAsync();
 
-            return Ok("User and landlord created successfully.");
-        }
+            // Generate email confirmation token
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
+            var confirmationLink = $"{_frontendOptions.BaseUrl}/Account/ConfirmEmail?userId={user.Id}&token={token}";
+
+            await _emailSender.SendEmailAsync(user.Email, "Confirm your email",
+            $"Please confirm your account by <a href='{confirmationLink}'>clicking here</a>.");
+
+            return Ok("User created successfully! Please check your email to confirm your account.");
+        }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
@@ -83,15 +99,43 @@ namespace Rently.Api.Controllers
             if (user == null)
                 return Unauthorized("Invalid email or password");
 
+            // Check email confirmed before allowing login
+            if (!user.EmailConfirmed)
+                return StatusCode(403, "Email not confirmed");
+
             var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
             if (!passwordValid)
                 return Unauthorized("Invalid email or password");
 
-            var landord = await _context.Landlords.SingleOrDefaultAsync(x => x.IdentityUserId == user.Id);
+            var landlord = await _context.Landlords.SingleOrDefaultAsync(x => x.IdentityUserId == user.Id);
 
-            var token = GenerateJwtToken(user, landord);
+            var token = GenerateJwtToken(user, landlord);
 
             return Ok(new { token });
+        }
+
+        [HttpPost("resend-email-confirmation")]
+        public async Task<IActionResult> ResendConfirmation([FromBody] ResendEmailDto dto)
+        {
+            if (string.IsNullOrEmpty(dto.Email))
+                return BadRequest("Email is required.");
+
+            var user = await _userManager.FindByEmailAsync(dto.Email);
+            if (user == null)
+                return Ok("If your email is registered, a confirmation link has been sent."); // Don't reveal user existence
+
+            if (await _userManager.IsEmailConfirmedAsync(user))
+                return Ok("Email is already confirmed. You can login.");
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            var confirmationLink = $"{_frontendOptions.BaseUrl}/Account/ConfirmEmail?userId={user.Id}&token={token}";
+
+            var emailBody = $"Please confirm your email by clicking this link: <a href='{confirmationLink}'>Confirm Email</a>";
+
+            await _emailSender.SendEmailAsync(dto.Email, "Confirm your email", emailBody);
+
+            return Ok("If your email is registered, a confirmation link has been sent.");
         }
 
         private string GenerateJwtToken(IdentityUser user, Landlord landord)
