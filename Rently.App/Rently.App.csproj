@@ -19,7 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Rently.Common\Rently.Common.csproj" />
+    <ProjectReference Include="..\Rently.Common\Rently.Shared.csproj" />
+    <ProjectReference Include="..\Rently.Shared\Rently.Shared.csproj" />
   </ItemGroup>
 
 </Project>

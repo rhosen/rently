@@ -1,139 +1,17 @@
 ﻿using DotNetEnv;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Rently.Api.Data;
-using Rently.Api.Interfaces;
-using Rently.Api.Services;
-using Rently.Core.Interfaces.Messaging;
-using Rently.Infrastructure.Messaging.Mailgun;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Rently.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 
-// DB Context
-builder.Services.AddDbContext<RentlyDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-{
-    options.Password.RequireDigit = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 6;
-    options.Password.RequireUppercase = false;
-})
-.AddEntityFrameworkStores<RentlyDbContext>()
-.AddDefaultTokenProviders();
-
-// JWT Authentication
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(key)
-    };
-});
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("https://localhost:7091") // ← your frontend URL
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Rently API",
-        Version = "v1",
-        Description = "API for Rently application"
-    });
-
-    // Add JWT Auth to Swagger
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Enter 'Bearer' [space] and then your token:\r\n\r\nExample: \"Bearer eyJhbGci...\""
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
-});
-
-builder.Services.AddAuthorization();
-
-builder.Services.AddRouting(options => options.LowercaseUrls = true);
-
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; // ✅ Use this instead of Preserve
-        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    });
-
-builder.Services.AddScoped<IAccountService, AccountService>();
-
-builder.Services.Configure<MailgunOptions>(options =>
-{
-    options.ApiKey = Environment.GetEnvironmentVariable("Mailgun__ApiKey");
-    options.Domain = Environment.GetEnvironmentVariable("Mailgun__Domain");
-    options.From = Environment.GetEnvironmentVariable("Mailgun__FromEmail");
-});
-
-builder.Services.AddHttpClient("MailgunClient", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["Mailgun:BaseUrl"]);
-});
-
-builder.Services.AddTransient<IEmailSender, MailgunEmailSender>();
+builder.Services.ConfigureServiceCollection(builder.Configuration);
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();  // shows detailed errors in browser
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseSwagger();
@@ -143,7 +21,6 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseCors("AllowFrontend");
-
 app.UseAuthentication();
 app.UseAuthorization();
 

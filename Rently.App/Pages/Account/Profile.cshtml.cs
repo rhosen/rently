@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Rently.App.Configs;
-using Rently.Common.Dtos.Auth;
-using Rently.Common.Dtos.Data;
+using Rently.Shared.Dtos.Auth;
+using Rently.Shared.Dtos.Data;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
