@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Rently.Core.Interfaces.Account;
 using Rently.Core.Interfaces.Domain;
 using Rently.Shared.Dtos.Auth;
+using System.Net;
 
 namespace Rently.Infrastructure.Services.Account
 {
@@ -37,6 +39,17 @@ namespace Rently.Infrastructure.Services.Account
             return "Registration successful. Please confirm your email.";
         }
 
+        public async Task<bool> ConfirmEmailAsync(string userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return false;
+
+            var decodedToken = Uri.UnescapeDataString(token);
+            var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+            return result.Succeeded;
+        }
+
         public async Task<bool> ChangePassword(ChangePasswordDto dto, string identityId)
         {
             var user = await _userManager.FindByIdAsync(identityId);
@@ -64,27 +77,29 @@ namespace Rently.Infrastructure.Services.Account
             return "If your email is registered, a confirmation link has been sent.";
         }
 
-        public async Task<AuthDto> AuthenticateUser(LoginDto dto)
+        public async Task<ResultDto<AuthDto>> AuthenticateUser(LoginDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
             if (user == null)
-                throw new UnauthorizedAccessException("Invalid email or password");
+                return ResultDto<AuthDto>.Failure("Invalid email or password");
 
             if (!user.EmailConfirmed)
-                throw new InvalidOperationException("Email not confirmed");
+                return ResultDto<AuthDto>.Failure("Email not confirmed");
 
             var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
             if (!passwordValid)
-                throw new UnauthorizedAccessException("Invalid email or password");
+                return ResultDto<AuthDto>.Failure("Invalid email or password");
 
             var landlord = await _landlordService.GetByIdentityUserIdAsync(user.Id);
 
-            return new AuthDto
+            var authDto = new AuthDto
             {
                 Email = dto.Email,
                 FullName = string.Concat(landlord.FirstName, " ", landlord.LastName),
                 LandlordId = landlord.Id.ToString(),
             };
+
+            return ResultDto<AuthDto>.Success(authDto);
         }
     }
 }

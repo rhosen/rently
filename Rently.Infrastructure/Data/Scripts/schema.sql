@@ -1,8 +1,3 @@
--- Drop if Db exists
-DROP DATABASE IF EXISTS RentlyDb;
-
--- Create Database
-CREATE DATABASE RentlyDb
 
 -- Use Db
 USE RentlyDb

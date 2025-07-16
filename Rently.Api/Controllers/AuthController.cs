@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Rently.Core.Interfaces.Account;
 using Rently.Core.Interfaces.Utils;
 using Rently.Infrastructure.Services.Account;
@@ -29,10 +30,35 @@ namespace Rently.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+                return BadRequest("Invalid user ID or token.");
+
+            var result = await _accountService.ConfirmEmailAsync(userId, token);
+
+            if (result)
+                return Ok("Email confirmed.");
+            else
+                return BadRequest("Email confirmation failed.");
+        }
+
+
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
         {
-            var result = await _accountService.AuthenticateUser(dto);
+            var authResult = await _accountService.AuthenticateUser(dto);
+
+            if (!authResult.IsSuccess)
+            {
+                if (authResult.ErrorMessage == "Email not confirmed")
+                    return StatusCode(StatusCodes.Status403Forbidden, new { message = authResult.ErrorMessage });
+
+                return Unauthorized(new { message = authResult.ErrorMessage });
+            }
+
+            var result = authResult.Data!;
 
             var claims = new List<Claim>
             {
@@ -47,10 +73,11 @@ namespace Rently.Api.Controllers
             return Ok(new { token });
         }
 
+
         [HttpPost("resend-email-confirmation")]
         public async Task<IActionResult> ResendConfirmation([FromBody] ResendEmailDto dto)
         {
-            var result = await _accountService.ResendConfirmationEmailAsync(dto); 
+            var result = await _accountService.ResendConfirmationEmailAsync(dto);
             return Ok(result);
         }
     }

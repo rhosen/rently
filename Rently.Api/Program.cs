@@ -1,11 +1,13 @@
 ﻿using DotNetEnv;
 using Rently.API.Extensions;
+using Rently.Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 
 builder.Services.ConfigureServiceCollection(builder.Configuration);
+builder.ConfigureSerilog();
 
 var app = builder.Build();
 

@@ -7,7 +7,9 @@ using Rently.Infrastructure.Services.Account;
 using Rently.Infrastructure.Services.Domain;
 using Rently.Infrastructure.Services.Messaging.Mailgun;
 using Rently.Infrastructure.Services.Utils;
+using Rently.Shared.Logging;
 using Rently.Shared.Options;
+using Rently.Shared.Services;
 
 namespace Rently.API.Extensions;
 
@@ -15,12 +17,11 @@ public static class RentlyServiceExtensions
 {
     public static IServiceCollection ConfigureRentlyAppServices(this IServiceCollection services, IConfiguration config)
     {
-        services.Configure<FrontendOptions>(config.GetSection("FrontendOptions"));
+        services.Configure<FrontendOptions>(config.GetSection("Frontend"));
         services.AddScoped<IEmailLinkBuilder, EmailLinkBuilder>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ILandlordService, LandlordService>();
         services.AddScoped<IAccountService, AccountService>();
-
         services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 
 
@@ -37,6 +38,7 @@ public static class RentlyServiceExtensions
         });
 
         services.AddTransient<IEmailSender, MailgunEmailSender>();
+        services.AddScoped<ILogService, LogService>();
 
         return services;
     }

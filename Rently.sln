@@ -5,6 +5,7 @@ VisualStudioVersion = 17.14.36221.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rently.Api", "Rently.Api\Rently.Api.csproj", "{EC91B27A-EF10-4A78-973B-E8E98A09447C}"
 	ProjectSection(ProjectDependencies) = postProject
+		{9E1EF7E4-4A41-D142-E699-B3935B0808C5} = {9E1EF7E4-4A41-D142-E699-B3935B0808C5}
 		{BE123A3A-CB21-4713-AF1B-2ED548A3A5D6} = {BE123A3A-CB21-4713-AF1B-2ED548A3A5D6}
 		{D381A904-B396-4F7B-9944-64508A8EE9F1} = {D381A904-B396-4F7B-9944-64508A8EE9F1}
 	EndProjectSection
@@ -22,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rently.Infrastructure", "Re
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rently.Shared", "Rently.Shared\Rently.Shared.csproj", "{9E1EF7E4-4A41-D142-E699-B3935B0808C5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +55,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EC91B27A-EF10-4A78-973B-E8E98A09447C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{BE123A3A-CB21-4713-AF1B-2ED548A3A5D6} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{D381A904-B396-4F7B-9944-64508A8EE9F1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FA0E48D6-3B10-4F4A-9DD9-03CB0C5F0D18}
