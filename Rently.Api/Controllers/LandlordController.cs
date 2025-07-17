@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Rently.Api.Data;
-using Rently.Api.Interfaces;
-using Rently.Common.Dtos.Auth;
-using Rently.Common.Dtos.Data;
+using Rently.Core.Entities;
+using Rently.Core.Interfaces.Account;
+using Rently.Infrastructure.Data;
+using Rently.Shared.Dtos.Auth;
+using Rently.Shared.Dtos.Data;
 
 namespace Rently.Api.Controllers
 {
@@ -26,7 +27,7 @@ namespace Rently.Api.Controllers
         [HttpGet("me")]
         public async Task<ActionResult<LandlordDto>> GetProfile()
         {
-            Data.Entities.Landlord? landlord = await GetLandlord();
+            Landlord? landlord = await GetLandlord();
 
             if (landlord == null)
                 return NotFound();
@@ -52,7 +53,7 @@ namespace Rently.Api.Controllers
         [HttpPut("me")]
         public async Task<IActionResult> UpdateProfile([FromBody] LandlordDto dto)
         {
-            Data.Entities.Landlord? landlord = await GetLandlord();
+            Landlord landlord = await GetLandlord();
 
             if (landlord == null)
                 return NotFound();
@@ -75,7 +76,7 @@ namespace Rently.Api.Controllers
             return NoContent();
         }
 
-        private async Task<Data.Entities.Landlord?> GetLandlord()
+        private async Task<Landlord> GetLandlord()
         {
             var landlordId = GetCurrentUserId();
 

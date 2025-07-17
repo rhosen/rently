@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Rently.Api.Data;
-using Rently.Api.Data.Entities;
-using Rently.Common.Dtos.Auth;
+using Rently.Core.Interfaces.Account;
+using Rently.Core.Interfaces.Utils;
+using Rently.Infrastructure.Services.Account;
+using Rently.Shared.Dtos.Auth;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace Rently.Api.Controllers
 {
@@ -15,115 +13,72 @@ namespace Rently.Api.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IConfiguration _configuration;
-        private readonly RentlyDbContext _context;
+        private readonly IAccountService _accountService;
+        private readonly ITokenGenerator _tokenGenerator;
 
-        public AuthController(UserManager<IdentityUser> userManager, 
-                              IConfiguration configuration,
-                              RentlyDbContext context)
+        public AuthController(IAccountService accountService,
+                              ITokenGenerator tokenGenerator)
         {
-            _userManager = userManager;
-            _configuration = configuration;
-            _context = context;
+            _accountService = accountService;
+            _tokenGenerator = tokenGenerator;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto dto)
         {
-            // Check if user already exists
-            var userExists = await _userManager.FindByEmailAsync(dto.Email);
-            if (userExists != null)
-                return BadRequest("User already exists!");
+            var result = await _accountService.RegisterAsync(dto);
+            return Ok(result);
+        }
 
-            // Create Identity user
-            var user = new IdentityUser
-            {
-                Email = dto.Email,
-                UserName = dto.Email,
-                PhoneNumber = dto.PhoneNumber
-            };
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+                return BadRequest("Invalid user ID or token.");
 
-            var result = await _userManager.CreateAsync(user, dto.Password);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
+            var result = await _accountService.ConfirmEmailAsync(userId, token);
 
-            // Create Landlord record
-            var landlord = new Landlord
-            {
-                Id = Guid.NewGuid(),
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                DateOfBirth = dto.DateOfBirth,
-                Email = dto.Email,
-                PhoneNumber = dto.PhoneNumber,
-
-                StreetAddress = dto.StreetAddress,
-                City = dto.City,
-                StateOrProvince = dto.StateOrProvince,
-                PostalCode = dto.PostalCode,
-                Country = dto.Country,
-
-                IdentityUserId = user.Id,
-                CreatedAt = DateTime.UtcNow,
-                IsActive = true
-            };
-
-            _context.Landlords.Add(landlord);
-            await _context.SaveChangesAsync();
-
-            return Ok("User and landlord created successfully.");
+            if (result)
+                return Ok("Email confirmed.");
+            else
+                return BadRequest("Email confirmation failed.");
         }
 
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
         {
-            var user = await _userManager.FindByEmailAsync(dto.Email);
-            if (user == null)
-                return Unauthorized("Invalid email or password");
+            var authResult = await _accountService.AuthenticateUser(dto);
 
-            var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
-            if (!passwordValid)
-                return Unauthorized("Invalid email or password");
+            if (!authResult.IsSuccess)
+            {
+                if (authResult.ErrorMessage == "Email not confirmed")
+                    return StatusCode(StatusCodes.Status403Forbidden, new { message = authResult.ErrorMessage });
 
-            var landord = await _context.Landlords.SingleOrDefaultAsync(x => x.IdentityUserId == user.Id);
+                return Unauthorized(new { message = authResult.ErrorMessage });
+            }
 
-            var token = GenerateJwtToken(user, landord);
+            var result = authResult.Data!;
+
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, result.LandlordId.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, result.Email ?? ""),
+                new Claim(JwtRegisteredClaimNames.Name, result.FullName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var token = _tokenGenerator.GenerateToken(claims);
 
             return Ok(new { token });
         }
 
-        private string GenerateJwtToken(IdentityUser user, Landlord landord)
+
+        [HttpPost("resend-email-confirmation")]
+        public async Task<IActionResult> ResendConfirmation([FromBody] ResendEmailDto dto)
         {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-            var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
-
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, landord.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
-                new Claim(JwtRegisteredClaimNames.Name, string.Concat(landord.FirstName, " ", landord.LastName) ?? ""),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpiryMinutes"])),
-                Issuer = jwtSettings["Issuer"],
-                Audience = jwtSettings["Audience"],
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
+            var result = await _accountService.ResendConfirmationEmailAsync(dto);
+            return Ok(result);
         }
-
     }
-
 }

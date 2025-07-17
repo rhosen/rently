@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Rently.App.Configs;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace Rently.App.Pages.Account
 {
@@ -27,15 +26,25 @@ namespace Rently.App.Pages.Account
         {
             return User.Identity.IsAuthenticated ? RedirectToPage("/Landlord/Index") : Page();
         }
+
         public async Task<IActionResult> OnPostAsync()
         {
             var response = await AuthenticateUserAsync(Email, Password);
 
             if (!response.IsSuccessStatusCode)
             {
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Forbidden &&
+                    responseContent.Contains("Email not confirmed"))
+                {
+                    return RedirectToPage("/Account/ResendConfirmationEmail");
+                }
+
                 ModelState.AddModelError(string.Empty, "Login failed.");
                 return Page();
             }
+
 
             var token = await ExtractTokenAsync(response);
 

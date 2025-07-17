@@ -8,6 +8,8 @@
         {
             public const string Register = "/api/auth/register";
             public const string Login = "/api/auth/login";
+            public const string ConfirmEmail = "api/auth/confirm-email?userId=";
+            public const string ReconfirmEmail = "/api/auth/resend-email-confirmation";
         }
 
         public static class Landlord

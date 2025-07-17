@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Rently.Api.Data;
-using Rently.Api.Data.Entities;
+using Rently.Core.Entities;
+using Rently.Infrastructure.Data;
+using Rently.Shared.Dtos.Data;
 
 namespace Rently.Api.Controllers
 {
@@ -26,7 +27,7 @@ namespace Rently.Api.Controllers
 
             var properties = await _context.Properties
                 .Where(p => p.LandlordId == landlordId && !p.IsDeleted)
-                .Select(p => new Common.Dtos.Data.PropertyDto
+                .Select(p => new PropertyDto
                 {
                     Id = p.Id,
                     Name = p.Name,
