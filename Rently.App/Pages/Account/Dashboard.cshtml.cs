@@ -7,7 +7,7 @@ using Rently.App.Models;
 using Rently.Shared.Dtos.Data;
 using System.Text.Json;
 
-namespace Rently.App.Pages.Landlord
+namespace Rently.App.Pages.Account
 {
     [Authorize]
     public class DashboardModel : PageModel
@@ -20,7 +20,6 @@ namespace Rently.App.Pages.Landlord
         }
 
         public KpiModel Kpi { get; set; }
-        public string Email { get; private set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -30,7 +29,6 @@ namespace Rently.App.Pages.Landlord
                 return RedirectToPage("/Account/Login");
             }
 
-            Email = User?.Identity?.Name ?? "Landlord";
             var token = User.FindFirst("JWToken")?.Value;
             HttpClient client = GetClient(token);
             await LoadPropertyAsync(client);

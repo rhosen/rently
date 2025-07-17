@@ -5,7 +5,7 @@ using Rently.App.Helpers;
 using Rently.Shared.Dtos.Data;
 using System.Text.Json;
 
-namespace Rently.App.Pages.Landlord
+namespace Rently.App.Pages.Account
 {
     public class IndexModel : PageModel
     {
@@ -15,8 +15,6 @@ namespace Rently.App.Pages.Landlord
         {
             _httpClientFactory = httpClientFactory;
         }
-        public string Email { get; set; } = "Landlord";
-
         public List<PropertyDto> Properties { get; set; }
         public List<UnitDto> Units { get; set; }
         public PropertyDto Property { get; set; }
@@ -32,7 +30,6 @@ namespace Rently.App.Pages.Landlord
                 return RedirectToPage("/Account/Login");
             }
 
-            Email = User?.Identity?.Name ?? "Landlord";
             var token = User.FindFirst("JWToken")?.Value;
             HttpClient client = GetClient(token);
             await LoadPropertyAsync(client);

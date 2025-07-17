@@ -12,29 +12,29 @@
             public const string ReconfirmEmail = "/api/auth/resend-email-confirmation";
         }
 
-        public static class Landlord
+        public static class Account
         {
-            public const string Create = "/api/landlords";
+            public const string Create = "/api/accounts";
 
-            // ✅ Authenticated landlord: get their own profile
-            public const string Me = "/api/landlord/me";
+            // ✅ Authenticated account: get their own profile
+            public const string Me = "/api/account/me";
 
-            // ✅ Authenticated landlord: update their own profile
-            public const string UpdateMe = "/api/landlord/me";
+            // ✅ Authenticated account: update their own profile
+            public const string UpdateMe = "/api/account/me";
 
-            // ✅ Authenticated landlord: get their own properties
-            public const string GetProperties = "/api/landlord/me/properties";
+            // ✅ Authenticated account: get their own properties
+            public const string GetProperties = "/api/account/me/properties";
 
             // If you want, you can add:
-            public const string ChangePassword = "/api/landlord/me/change-password";
-            // public const string UploadProfileImage = "/api/landlords/me/photo";
+            public const string ChangePassword = "/api/account/me/change-password";
+            // public const string UploadProfileImage = "/api/accounts/me/photo";
         }
 
 
         public static class Property
         {
             public const string Create = "/api/properties";
-            public const string GetByLandlord = "/api/landlords/{landlordId}/properties";
+            public const string GetByAccount = "/api/accounts/{accountId}/properties";
             public const string Get = "/api/property";
         }
 

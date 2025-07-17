@@ -4,6 +4,6 @@
     {
         public string FullName { get; set; } = default!;
         public string Email { get; set; } = default!;
-        public string LandlordId { get; set; } = default!;
+        public string AccountId { get; set; } = default!;
     }
 }

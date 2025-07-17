@@ -21,7 +21,7 @@ namespace Rently.App.Pages.Account
         }
 
         [BindProperty]
-        public LandlordDto Landlord { get; set; } = new();
+        public AccountDto Account { get; set; } = new();
 
         [BindProperty]
         public ChangePasswordDto ChangePasswordDto { get; set; } = new();
@@ -36,7 +36,7 @@ namespace Rently.App.Pages.Account
             var client = _httpClientFactory.CreateClient("RentlyApi");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.GetAsync(ApiConfig.Landlord.Me);
+            var response = await client.GetAsync(ApiConfig.Account.Me);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -44,7 +44,7 @@ namespace Rently.App.Pages.Account
                 return Page();
             }
 
-            Landlord = await response.Content.ReadFromJsonAsync<LandlordDto>() ?? new LandlordDto();
+            Account = await response.Content.ReadFromJsonAsync<AccountDto>() ?? new AccountDto();
 
             return Page();
         }
@@ -59,7 +59,7 @@ namespace Rently.App.Pages.Account
             var client = _httpClientFactory.CreateClient("RentlyApi");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.PutAsJsonAsync(ApiConfig.Landlord.UpdateMe, Landlord);
+            var response = await client.PutAsJsonAsync(ApiConfig.Account.UpdateMe, Account);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -85,7 +85,7 @@ namespace Rently.App.Pages.Account
 
             var content = new StringContent(JsonSerializer.Serialize(ChangePasswordDto), Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync(ApiConfig.Landlord.ChangePassword, content);
+            var response = await client.PostAsync(ApiConfig.Account.ChangePassword, content);
 
             if (!response.IsSuccessStatusCode)
             {

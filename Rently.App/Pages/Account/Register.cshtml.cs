@@ -42,7 +42,7 @@ namespace Rently.App.Pages.Account
 
         public IActionResult OnGet()
         {
-            return User.Identity.IsAuthenticated ? RedirectToPage("/Landlord/Index") : Page();
+            return User.Identity.IsAuthenticated ? RedirectToPage("/Account/Index") : Page();
         }
 
         public async Task<IActionResult> OnPostAsync()

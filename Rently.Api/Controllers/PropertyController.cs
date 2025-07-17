@@ -26,7 +26,7 @@ namespace Rently.Api.Controllers
             var landlordId = GetCurrentUserId(); // implement method to get current user (landlord) id
 
             var properties = await _context.Properties
-                .Where(p => p.LandlordId == landlordId && !p.IsDeleted)
+                .Where(p => p.AccountId == landlordId && !p.IsDeleted)
                 .Select(p => new PropertyDto
                 {
                     Id = p.Id,
@@ -45,7 +45,7 @@ namespace Rently.Api.Controllers
         public async Task<IActionResult> AddProperty([FromBody] Property property)
         {
             var landlordId = GetCurrentUserId();
-            property.LandlordId = landlordId;
+            property.AccountId = landlordId;
             property.Id = Guid.NewGuid();
             property.CreatedAt = DateTime.UtcNow;
             property.IsDeleted = false;
@@ -64,7 +64,7 @@ namespace Rently.Api.Controllers
             var landlordId = GetCurrentUserId();
 
             var property = await _context.Properties
-                .FirstOrDefaultAsync(p => p.Id == id && p.LandlordId == landlordId && !p.IsDeleted);
+                .FirstOrDefaultAsync(p => p.Id == id && p.AccountId == landlordId && !p.IsDeleted);
 
             if (property == null)
                 return NotFound();
@@ -86,7 +86,7 @@ namespace Rently.Api.Controllers
 
             var property = await _context.Properties
                 .Include(p => p.Units.Where(u => !u.IsDeleted && u.IsActive)) // active units only
-                .FirstOrDefaultAsync(p => p.Id == id && p.LandlordId == landlordId && !p.IsDeleted);
+                .FirstOrDefaultAsync(p => p.Id == id && p.AccountId == landlordId && !p.IsDeleted);
 
             if (property == null)
                 return NotFound();
@@ -109,7 +109,7 @@ namespace Rently.Api.Controllers
             var landlordId = GetCurrentUserId();
 
             var property = await _context.Properties
-                .FirstOrDefaultAsync(p => p.Id == id && p.LandlordId == landlordId && !p.IsDeleted);
+                .FirstOrDefaultAsync(p => p.Id == id && p.AccountId == landlordId && !p.IsDeleted);
 
             if (property == null)
                 return NotFound();
@@ -127,7 +127,7 @@ namespace Rently.Api.Controllers
             var landlordId = GetCurrentUserId();
 
             var property = await _context.Properties
-                .FirstOrDefaultAsync(p => p.Id == id && p.LandlordId == landlordId && !p.IsDeleted);
+                .FirstOrDefaultAsync(p => p.Id == id && p.AccountId == landlordId && !p.IsDeleted);
 
             if (property == null)
                 return NotFound();

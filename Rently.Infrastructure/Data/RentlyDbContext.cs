@@ -12,7 +12,7 @@ namespace Rently.Infrastructure.Data
         {
         }
 
-        public DbSet<Landlord> Landlords { get; set; }
+        public DbSet<Account> Accounts { get; set; }
         public DbSet<Property> Properties { get; set; }
         public DbSet<Unit> Units { get; set; }
         public DbSet<Payment> Payments { get; set; }

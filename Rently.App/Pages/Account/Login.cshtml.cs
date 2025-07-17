@@ -24,7 +24,7 @@ namespace Rently.App.Pages.Account
 
         public IActionResult OnGet()
         {
-            return User.Identity.IsAuthenticated ? RedirectToPage("/Landlord/Index") : Page();
+            return User.Identity.IsAuthenticated ? RedirectToPage("/Account/Index") : Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -52,7 +52,7 @@ namespace Rently.App.Pages.Account
 
             await SignInUserAsync(claims);
 
-            return RedirectToPage("/Landlord/Index");
+            return RedirectToPage("/Account/Index");
         }
 
         private async Task<HttpResponseMessage> AuthenticateUserAsync(string email, string password)

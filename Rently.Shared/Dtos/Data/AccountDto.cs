@@ -1,6 +1,6 @@
 ﻿namespace Rently.Shared.Dtos.Data
 {
-    public class LandlordDto
+    public class AccountDto
     {
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";

@@ -20,8 +20,8 @@ public static class RentlyServiceExtensions
         services.Configure<FrontendOptions>(config.GetSection("Frontend"));
         services.AddScoped<IEmailLinkBuilder, EmailLinkBuilder>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<ILandlordService, LandlordService>();
-        services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<Core.Interfaces.Domain.IAccountService, AccountService>();
+        services.AddScoped<Core.Interfaces.Account.IAuthService, AuthService>();
         services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 
 

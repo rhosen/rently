@@ -1,5 +1,12 @@
-USE [RentlyDb]
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'RentlyDb')
+BEGIN
+    CREATE DATABASE [RentlyDb];
+END
 GO
+
+USE [RentlyDb];
+GO
+
 /****** Object:  Table [dbo].[AspNetRoleClaims]    Script Date: 6/4/2018 10:18:03 PM ******/
 SET ANSI_NULLS ON
 GO

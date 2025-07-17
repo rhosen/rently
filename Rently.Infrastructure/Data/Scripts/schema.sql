@@ -6,10 +6,10 @@ USE RentlyDb
 DROP TABLE IF EXISTS Payments;
 DROP TABLE IF EXISTS Units;
 DROP TABLE IF EXISTS Properties;
-DROP TABLE IF EXISTS Landlords;
+DROP TABLE IF EXISTS Accounts;
 
--- Create Landlords table
-CREATE TABLE Landlords (
+-- Create Accounts table
+CREATE TABLE Accounts (
     Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     FirstName NVARCHAR(50) NOT NULL,
     LastName NVARCHAR(50) NOT NULL,
@@ -25,8 +25,8 @@ CREATE TABLE Landlords (
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
     UpdatedAt DATETIME2 NULL,
-    CONSTRAINT UQ_Landlords_Email UNIQUE (Email),
-    CONSTRAINT FK_Landlords_Users FOREIGN KEY (IdentityUserId)
+    CONSTRAINT UQ_Accounts_Email UNIQUE (Email),
+    CONSTRAINT FK_Accounts_Users FOREIGN KEY (IdentityUserId)
         REFERENCES AspNetUsers(Id)
         ON DELETE SET NULL
 );
@@ -35,13 +35,13 @@ CREATE TABLE Landlords (
 -- Create Properties table
 CREATE TABLE Properties (
     Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    LandlordId UNIQUEIDENTIFIER NOT NULL,
+    AccountId UNIQUEIDENTIFIER NOT NULL,
     Name NVARCHAR(100) NOT NULL,
     Address NVARCHAR(200),
     CreatedAt DATETIME NOT NULL DEFAULT GETUTCDATE(),
     IsDeleted BIT NOT NULL DEFAULT 0,
     IsActive BIT NOT NULL DEFAULT 1,
-    FOREIGN KEY (LandlordId) REFERENCES Landlords(Id)
+    FOREIGN KEY (AccountId) REFERENCES Accounts(Id)
 );
 
 -- Create Units table

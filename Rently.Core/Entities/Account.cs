@@ -2,7 +2,7 @@
 
 namespace Rently.Core.Entities
 {
-    public class Landlord
+    public class Account
     {
         public Guid Id { get; set; }
 

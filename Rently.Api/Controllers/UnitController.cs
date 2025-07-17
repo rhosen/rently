@@ -29,7 +29,7 @@ namespace Rently.Api.Controllers
                 var units = await (
                                     from unit in _context.Units
                                     join property in _context.Properties on unit.PropertyId equals property.Id
-                                    where property.LandlordId == landlordId && !unit.IsDeleted && !property.IsDeleted
+                                    where property.AccountId == landlordId && !unit.IsDeleted && !property.IsDeleted
                                     select new UnitDto
                                     {
                                         UnitId = unit.Id,
@@ -52,7 +52,7 @@ namespace Rently.Api.Controllers
 
                 // Check if property belongs to current landlord and is not deleted
                 var property = await _context.Properties
-                    .FirstOrDefaultAsync(p => p.Id == propertyId && p.LandlordId == landlordId && !p.IsDeleted);
+                    .FirstOrDefaultAsync(p => p.Id == propertyId && p.AccountId == landlordId && !p.IsDeleted);
 
                 if (property == null)
                     return NotFound("Property not found or access denied.");
@@ -71,7 +71,7 @@ namespace Rently.Api.Controllers
                 var landlordId = GetCurrentUserId();
 
                 var property = await _context.Properties
-                    .FirstOrDefaultAsync(p => p.Id == unit.PropertyId && p.LandlordId == landlordId && !p.IsDeleted);
+                    .FirstOrDefaultAsync(p => p.Id == unit.PropertyId && p.AccountId == landlordId && !p.IsDeleted);
 
                 if (property == null)
                     return BadRequest("Invalid property or access denied.");
@@ -95,7 +95,7 @@ namespace Rently.Api.Controllers
 
                 var unit = await _context.Units
                     .Include(u => u.Property)
-                    .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted && u.Property.LandlordId == landlordId);
+                    .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted && u.Property.AccountId == landlordId);
 
                 if (unit == null)
                     return NotFound();
@@ -117,7 +117,7 @@ namespace Rently.Api.Controllers
 
                 var unit = await _context.Units
                     .Include(u => u.Property)
-                    .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted && u.Property.LandlordId == landlordId);
+                    .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted && u.Property.AccountId == landlordId);
 
                 if (unit == null)
                     return NotFound();
@@ -138,7 +138,7 @@ namespace Rently.Api.Controllers
 
                 var unit = await _context.Units
                     .Include(u => u.Property)
-                    .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted && u.Property.LandlordId == landlordId);
+                    .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted && u.Property.AccountId == landlordId);
 
                 if (unit == null)
                     return NotFound();
@@ -157,7 +157,7 @@ namespace Rently.Api.Controllers
 
                 var unit = await _context.Units
                     .Include(u => u.Property)
-                    .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted && u.Property.LandlordId == landlordId);
+                    .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted && u.Property.AccountId == landlordId);
 
                 if (unit == null)
                     return NotFound();

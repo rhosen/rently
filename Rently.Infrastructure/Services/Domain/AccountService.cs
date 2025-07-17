@@ -1,23 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Rently.Core.Entities;
 using Rently.Core.Interfaces.Domain;
 using Rently.Infrastructure.Data;
 using Rently.Shared.Dtos.Auth;
 
 namespace Rently.Infrastructure.Services.Domain
 {
-    public class LandlordService : ILandlordService
+    public class AccountService : IAccountService
     {
         private readonly RentlyDbContext _context;
 
-        public LandlordService(RentlyDbContext context)
+        public AccountService(RentlyDbContext context)
         {
             _context = context;
         }
 
-        public async Task<Landlord> CreateAsync(RegisterDto dto, string identityUserId)
+        public async Task<Core.Entities.Account> CreateAsync(RegisterDto dto, string identityUserId)
         {
-            var landlord = new Landlord
+            var landlord = new Core.Entities.Account
             {
                 Id = Guid.NewGuid(),
                 FirstName = dto.FirstName,
@@ -35,16 +34,24 @@ namespace Rently.Infrastructure.Services.Domain
                 IsActive = true
             };
 
-            _context.Landlords.Add(landlord);
+            _context.Accounts.Add(landlord);
             await _context.SaveChangesAsync();
             return landlord;
         }
 
-        public async Task<Landlord?> GetByIdentityUserIdAsync(string identityUserId)
+        public async Task<Core.Entities.Account?> GetAccountAsync(Guid accountId)
         {
-            return await _context.Landlords
-                .AsNoTracking()
-                .FirstOrDefaultAsync(l => l.IdentityUserId == identityUserId);
+            return await _context.Accounts
+               .AsNoTracking()
+               .FirstOrDefaultAsync(x => x.Id == accountId);
         }
+
+        public async Task<Core.Entities.Account?> GetAccountByIdentityAsync(string identityUserId)
+        {
+            return await _context.Accounts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.IdentityUserId == identityUserId);
+        }
+
     }
 }
